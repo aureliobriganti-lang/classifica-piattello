@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Risultati gare — A.S.D. Tiro a Volo Valloni</title>
+<style>
+  :root {
+    --navy: #001f3f; --navy2: #003366; --navy3: #0a3d6e; --gold: #d4af37; --gold2: #f1d580;
+    --testo: #ffffff; --muto: #b9c9d9; --hit: #ffffff; --zero: #d32f2f; --unshot: #2b4a6b; --premio: #8b0000;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--navy); color: var(--testo); font-family: Arial, Helvetica, sans-serif; }
+  a { color: var(--gold2); }
+
+  /* ---------- Testata ---------- */
+  .top { background: linear-gradient(180deg, #002b57, var(--navy)); border-bottom: 3px solid var(--gold); }
+  .top .in { max-width: 1200px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 14px; }
+  .top img { height: 56px; width: 62px; object-fit: contain; }
+  .top .brand { flex: 1; text-align: center; }
+  .top h1 { margin: 0; font-size: 22px; color: var(--gold); letter-spacing: .5px; }
+  .top .sub { color: var(--muto); font-size: 13px; margin-top: 2px; }
+  nav { max-width: 1200px; margin: 0 auto; padding: 8px 16px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+  nav a, .tabs a { text-decoration: none; padding: 8px 16px; border-radius: 999px; background: var(--navy2); color: #fff; font-weight: bold; font-size: 15px; border: 2px solid transparent; }
+  nav a.attivo, .tabs a.attivo { background: var(--gold); color: var(--navy); }
+  nav a .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #ff5252; margin-right: 6px; box-shadow: 0 0 8px #ff5252; animation: pulsa 1.4s infinite; }
+  @keyframes pulsa { 50% { opacity: .35; } }
+
+  main { max-width: 1200px; margin: 0 auto; padding: 14px 16px 40px; }
+  .card { background: var(--navy2); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+  h2 { color: var(--gold); margin: 0 0 4px; font-size: 24px; }
+  h3 { color: var(--gold); margin: 18px 0 8px; font-size: 18px; border-bottom: 2px solid var(--gold); padding-bottom: 4px; }
+  .meta { color: var(--muto); font-size: 14px; }
+  .meta b { color: #fff; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: bold; margin-left: 8px; vertical-align: middle; }
+  .badge.live { background: #d32f2f; color: #fff; }
+  .badge.fine { background: var(--gold); color: var(--navy); }
+  .tabs { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+  .vuoto { color: var(--muto); text-align: center; padding: 30px 0; font-size: 18px; }
+  .agg { color: var(--muto); font-size: 12px; text-align: right; margin-top: 6px; }
+
+  /* ---------- Classifica ---------- */
+  table { width: 100%; border-collapse: collapse; }
+  th { color: var(--gold); text-align: left; font-weight: normal; font-size: 14px; padding: 6px 8px; border-bottom: 2px solid var(--gold); white-space: nowrap; }
+  td { padding: 7px 8px; font-size: 16px; border-bottom: 1px solid #0f3560; vertical-align: middle; }
+  tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+  td.pos, th.pos { text-align: center; width: 44px; font-weight: bold; }
+  td.num, th.num { text-align: center; width: 60px; }
+  td.punti, th.punti { text-align: center; width: 70px; font-size: 20px; font-weight: bold; color: var(--gold2); }
+  td.cq, th.cq { white-space: nowrap; color: var(--muto); font-size: 14px; }
+  tr.premio td.pos { background: var(--premio); color: #fff; border-radius: 6px; }
+  tr.premio td.nome { font-weight: bold; }
+  tr.premio td.nome::after { content: " ★"; color: var(--gold); }
+  .legenda { color: var(--muto); font-size: 13px; margin-top: 8px; }
+  .legenda i { display: inline-block; width: 14px; height: 14px; background: var(--premio); border-radius: 3px; vertical-align: -2px; margin-right: 4px; }
+  .seq { display: inline-flex; gap: 2px; flex-wrap: wrap; }
+  .seq i { width: 11px; height: 11px; border-radius: 2px; background: var(--hit); }
+  .seq i.z { background: var(--zero); }
+  .seq i.g { margin-right: 4px; }
+
+  /* ---------- Batterie ---------- */
+  .batt { background: var(--navy2); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; }
+  .batt .tit { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .batt .tit h4 { margin: 0; color: var(--gold); font-size: 18px; }
+  .batt .tit span { color: var(--muto); font-size: 13px; }
+  .riga { display: grid; grid-template-columns: 34px minmax(140px, 260px) 1fr 44px 44px; gap: 8px; align-items: center; padding: 6px 4px; border-radius: 8px; }
+  .riga + .riga { border-top: 1px solid #0f3560; }
+  .riga.turno { background: var(--navy3); box-shadow: inset 0 0 0 2px var(--gold); }
+  .riga .ped { color: var(--gold); font-weight: bold; font-size: 18px; text-align: center; }
+  .riga .nome { font-weight: bold; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .riga .nome small { display: block; color: var(--muto); font-weight: normal; font-size: 12px; }
+  .celle { display: grid; grid-template-columns: repeat(25, 1fr); gap: 3px; max-width: 620px; }
+  .celle b { display: block; aspect-ratio: 1/1; border-radius: 4px; background: var(--unshot); font-size: 11px; font-weight: bold; color: #fff; text-align: center; line-height: 1; display: flex; align-items: center; justify-content: center; }
+  .celle b:nth-child(5n) { margin-right: 5px; }
+  .celle b.b { background: var(--hit); }
+  .celle b.z { background: var(--zero); }
+  .riga .tot { text-align: center; font-weight: bold; font-size: 20px; border-radius: 8px; padding: 4px 0; }
+  .riga .tot.zeri { background: rgba(211,47,47,.5); }
+  .riga .tot.buoni { background: var(--gold); color: var(--navy); }
+  .riga.prova .nome::after { content: " (prova)"; color: var(--muto); font-weight: normal; font-size: 12px; }
+
+  /* ---------- Archivio ---------- */
+  .anno { color: var(--gold); font-size: 20px; margin: 18px 0 8px; }
+  .lista a { display: flex; gap: 12px; align-items: center; text-decoration: none; color: #fff; background: var(--navy2); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; border-left: 5px solid var(--gold); }
+  .lista a:hover { background: var(--navy3); }
+  .lista .data { color: var(--gold2); font-weight: bold; width: 92px; flex: none; font-size: 14px; }
+  .lista .nome { flex: 1; font-weight: bold; font-size: 16px; }
+  .lista .info { color: var(--muto); font-size: 13px; white-space: nowrap; }
+
+  footer { text-align: center; color: var(--muto); font-size: 12px; padding: 20px; border-top: 1px solid #0f3560; }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 720px) {
+    .top img { height: 40px; width: 44px; }
+    .top h1 { font-size: 15px; }
+    td { font-size: 14px; padding: 6px 5px; }
+    td.punti, th.punti { font-size: 17px; width: 50px; }
+    th.cq, td.cq { display: none; }
+    .seqcol { display: none; }
+    .riga { grid-template-columns: 26px 1fr 40px 40px; grid-template-areas: "ped nome zeri buoni" "celle celle celle celle"; }
+    .riga .ped { grid-area: ped; } .riga .nome { grid-area: nome; } .riga .tot.zeri { grid-area: zeri; } .riga .tot.buoni { grid-area: buoni; }
+    .riga .celle { grid-area: celle; max-width: none; gap: 2px; }
+    .celle b { border-radius: 3px; font-size: 9px; }
+    .celle b:nth-child(5n) { margin-right: 3px; }
+    .celle b:last-child { margin-right: 0; }
+    .riga .tot { font-size: 16px; }
+    .lista .info { display: none; }
+  }
+</style>
+</head>
+<body>
+  <header class="top">
+    <div class="in">
+      <img src="logo-circolo.png" alt="">
+      <div class="brand">
+        <h1>A.S.D. TIRO A VOLO VALLONI</h1>
+        <div class="sub">Risultati gare · Cesenatico</div>
+      </div>
+      <img src="logo-fitav.png" alt="">
+    </div>
+    <nav>
+      <a href="#/live" id="navLive">Gara in corso</a>
+      <a href="#/archivio" id="navArchivio">Archivio gare</a>
+    </nav>
+  </header>
+
+  <main id="app"><div class="vuoto">Caricamento…</div></main>
+
+  <footer>A.S.D. Tiro a Volo Valloni · dati pubblicati da myGestGare · <span id="ver">v1</span></footer>
+
+<script>
+(function () {
+  const BASE = 'dati/';
+  const app = document.getElementById('app');
+  let indice = null;          // contenuto di index.json
+  let garaCache = {};         // id -> json gara
+  let timerLive = null;
+
+  const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const fetchJson = async (file) => {
+    const r = await fetch(BASE + file + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error(file + ' ' + r.status);
+    return r.json();
+  };
+  const dataIt = iso => { if (!iso) return ''; const [y, m, d] = iso.split('-'); return `${d}/${m}/${y}`; };
+  const periodo = g => g.dataFine && g.dataFine !== g.dataInizio ? `${dataIt(g.dataInizio)} – ${dataIt(g.dataFine)}` : dataIt(g.dataInizio);
+
+  // ---------------- Router ----------------
+  function route() {
+    const h = location.hash || '#/live';
+    document.getElementById('navLive').classList.toggle('attivo', h.startsWith('#/live'));
+    document.getElementById('navArchivio').classList.toggle('attivo', !h.startsWith('#/live'));
+    clearInterval(timerLive); timerLive = null;
+
+    if (h.startsWith('#/gara/')) {
+      const [, , id, tab] = h.split('/');
+      mostraGara(parseInt(id, 10), tab || 'classifica', false);
+    } else if (h.startsWith('#/archivio')) {
+      mostraArchivio();
+    } else {
+      mostraLive();
+    }
+  }
+  window.addEventListener('hashchange', route);
+
+  async function caricaIndice() {
+    try { indice = await fetchJson('index.json'); } catch (e) { indice = indice || { gare: [] }; }
+    return indice;
+  }
+
+  // ---------------- Gara in corso ----------------
+  async function mostraLive() {
+    await caricaIndice();
+    const id = indice.garaCorrenteId;
+    if (!id) {
+      app.innerHTML = `<div class="card"><h2>Nessuna gara in corso</h2>
+        <div class="vuoto">Quando una gara è in corso, qui trovi classifica e batterie aggiornate in tempo reale.<br><br>
+        <a href="#/archivio">Consulta l'archivio delle gare</a></div></div>`;
+      return;
+    }
+    const tab = (location.hash.split('/')[2]) || 'classifica';
+    await mostraGara(id, tab, true);
+    timerLive = setInterval(async () => {
+      await caricaIndice();
+      if (indice.garaCorrenteId !== id) { route(); return; }
+      const t = (location.hash.split('/')[2]) || 'classifica';
+      await mostraGara(id, t, true, true);
+    }, 30000);
+  }
+
+  // ---------------- Gara (classifica / batterie) ----------------
+  async function mostraGara(id, tab, live, silenzioso) {
+    let g;
+    try { g = await fetchJson(`gara-${id}.json`); garaCache[id] = g; }
+    catch (e) { if (!silenzioso) app.innerHTML = `<div class="card"><div class="vuoto">Gara non trovata.</div></div>`; return; }
+
+    const prefisso = live ? '#/live' : `#/gara/${id}`;
+    const haBatterie = (g.batterie || []).some(b => (b.righe || []).length > 0);
+    const badge = g.inCorso ? '<span class="badge live">LIVE</span>' : (g.conclusa ? '<span class="badge fine">CONCLUSA</span>' : '');
+
+    let html = `<div class="card">
+      <h2>${esc(g.nome)}${badge}</h2>
+      <div class="meta"><b>${periodo(g)}</b> · ${esc(g.disciplina)} · ${g.numeroPiattelli} piattelli · ${g.classifica?.length ?? 0} tiratori</div>
+      <div class="tabs">
+        <a href="${prefisso}/classifica" class="${tab === 'classifica' ? 'attivo' : ''}">Classifica</a>
+        ${haBatterie ? `<a href="${prefisso}/batterie" class="${tab === 'batterie' ? 'attivo' : ''}">Batterie</a>` : ''}
+      </div>
+      ${tab === 'batterie' && haBatterie ? htmlBatterie(g) : htmlClassifica(g)}
+      <div class="agg">Aggiornato: ${esc(g.aggiornato || '')}</div>
+    </div>`;
+
+    // Evita di far "saltare" la pagina se l'utente sta scorrendo: sostituisce solo se cambia
+    if (app.dataset.ultimo !== html) { const y = window.scrollY; app.innerHTML = html; app.dataset.ultimo = html; if (silenzioso) window.scrollTo(0, y); }
+  }
+
+  function seq(esiti) {
+    if (!esiti) return '';
+    return '<span class="seq">' + [...esiti].map((c, i) => `<i class="${c === '0' ? 'z' : ''}${(i + 1) % 5 === 0 ? ' g' : ''}"></i>`).join('') + '</span>';
+  }
+
+  function tabella(righe, conSequenza) {
+    if (!righe || righe.length === 0) return '<div class="vuoto">Nessun risultato ancora registrato.</div>';
+    let h = `<table><thead><tr><th class="pos">#</th><th class="num">Pett.</th><th>Tiratore</th><th class="cq">Cat. / Qual.</th><th class="punti">Punti</th>${conSequenza ? '<th class="seqcol">Sequenza</th>' : ''}</tr></thead><tbody>`;
+    for (const r of righe) {
+      h += `<tr class="${r.aPremio ? 'premio' : ''}">
+        <td class="pos">${r.pos}</td>
+        <td class="num">${r.pettorale || ''}</td>
+        <td class="nome">${esc(r.nominativo)}${r.societa ? `<br><small style="color:var(--muto)">${esc(r.societa)}</small>` : ''}</td>
+        <td class="cq">${esc(r.catQual || '')}</td>
+        <td class="punti">${r.punti}</td>
+        ${conSequenza ? `<td class="seqcol">${seq(r.sequenza)}</td>` : ''}
+      </tr>`;
+    }
+    return h + '</tbody></table>';
+  }
+
+  function htmlClassifica(g) {
+    let h = tabella(g.classifica, true);
+    h += '<div class="legenda"><i></i> tiratori attualmente a premio</div>';
+    for (const s of (g.speciali || [])) {
+      if (!s.righe || s.righe.length === 0) continue;
+      h += `<h3>Classifica ${esc(s.nome)}</h3>` + tabella(s.righe, false);
+    }
+    return h;
+  }
+
+  function htmlBatterie(g) {
+    const n = g.numeroPiattelli || 25;
+    let h = '';
+    for (const b of g.batterie) {
+      if (!b.righe || b.righe.length === 0) continue;
+      const stato = b.inCorso ? '<span class="badge live">in pedana</span>' : (b.completa ? '' : '<span>in attesa</span>');
+      h += `<div class="batt"><div class="tit"><h4>Batteria ${b.numero}</h4>${stato}</div>`;
+      for (const r of b.righe) {
+        const e = r.esiti || '';
+        let celle = '';
+        for (let i = 0; i < n; i++) celle += `<b class="${e[i] === '1' ? 'b' : e[i] === '0' ? 'z' : ''}">${e[i] === '0' ? '0' : ''}</b>`;
+        h += `<div class="riga${r.diTurno ? ' turno' : ''}${r.prova ? ' prova' : ''}">
+          <div class="ped">${r.pedana}</div>
+          <div class="nome">${esc(r.nominativo)}<small>${r.pettorale ? 'Pett. ' + r.pettorale + ' · ' : ''}${esc(r.catQual || '')}</small></div>
+          <div class="celle" style="grid-template-columns:repeat(${n},1fr)">${celle}</div>
+          <div class="tot zeri">${r.zeri ?? ''}</div><div class="tot buoni">${r.buoni ?? ''}</div>
+        </div>`;
+      }
+      h += '</div>';
+    }
+    return h || '<div class="vuoto">Nessuna batteria ancora acquisita.</div>';
+  }
+
+  // ---------------- Archivio ----------------
+  async function mostraArchivio() {
+    await caricaIndice();
+    const gare = (indice.gare || []).slice().sort((a, b) => (b.dataInizio || '').localeCompare(a.dataInizio || ''));
+    if (gare.length === 0) { app.innerHTML = '<div class="card"><div class="vuoto">Nessuna gara in archivio.</div></div>'; return; }
+    let h = '<div class="card"><h2>Archivio gare</h2><div class="lista">';
+    let anno = '';
+    for (const g of gare) {
+      const a = (g.dataInizio || '').slice(0, 4);
+      if (a !== anno) { anno = a; h += `<div class="anno">${anno}</div>`; }
+      h += `<a href="#/gara/${g.id}/classifica"><span class="data">${dataIt(g.dataInizio)}</span><span class="nome">${esc(g.nome)}${g.inCorso ? '<span class="badge live">LIVE</span>' : ''}</span><span class="info">${esc(g.disciplina)} · ${g.numeroPiattelli} piattelli · ${g.iscritti} iscritti</span></a>`;
+    }
+    app.innerHTML = h + '</div></div>';
+  }
+
+  route();
+})();
+</script>
+</body>
+</html>
