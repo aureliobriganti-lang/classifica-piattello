@@ -69,9 +69,13 @@
   .riga .ped { color: var(--gold); font-weight: bold; font-size: 18px; text-align: center; }
   .riga .nome { font-weight: bold; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .riga .nome small { display: block; color: var(--muto); font-weight: normal; font-size: 12px; }
-  .celle { display: grid; grid-template-columns: repeat(25, 1fr); gap: 3px; max-width: 620px; }
-  .celle b { display: block; aspect-ratio: 1/1; border-radius: 4px; background: var(--unshot); font-size: 11px; font-weight: bold; color: #fff; text-align: center; line-height: 1; display: flex; align-items: center; justify-content: center; }
+  .celle { display: flex; gap: 3px; max-width: 620px; }
+  .celle b { flex: 1 1 0; min-width: 0; aspect-ratio: 1/1; border-radius: 4px; background: var(--unshot); font-size: 11px; font-weight: bold; color: #fff; text-align: center; line-height: 1; display: flex; align-items: center; justify-content: center; }
   .celle b:nth-child(5n) { margin-right: 5px; }
+  .celle b:last-child { margin-right: 0; }
+  .riga.vuota { opacity: .45; }
+  .riga.vuota .nome { color: var(--muto); font-weight: normal; }
+  .riga.vuota .tot { visibility: hidden; }
   .celle b.b { background: var(--hit); }
   .celle b.z { background: var(--zero); }
   .riga .tot { text-align: center; font-weight: bold; font-size: 20px; border-radius: 8px; padding: 4px 0; }
@@ -102,7 +106,6 @@
     .riga .celle { grid-area: celle; max-width: none; gap: 2px; }
     .celle b { border-radius: 3px; font-size: 9px; }
     .celle b:nth-child(5n) { margin-right: 3px; }
-    .celle b:last-child { margin-right: 0; }
     .riga .tot { font-size: 16px; }
     .lista .info { display: none; }
   }
@@ -126,7 +129,7 @@
 
   <main id="app"><div class="vuoto">Caricamento…</div></main>
 
-  <footer>A.S.D. Tiro a Volo Valloni · dati pubblicati da myGestGare · <span id="ver">v1</span></footer>
+  <footer>A.S.D. Tiro a Volo Valloni · GestioneGarePiattello <span id="ver">v2</span></footer>
 
 <script>
 (function () {
@@ -220,7 +223,7 @@
 
   function tabella(righe, conSequenza) {
     if (!righe || righe.length === 0) return '<div class="vuoto">Nessun risultato ancora registrato.</div>';
-    let h = `<table><thead><tr><th class="pos">#</th><th class="num">Pett.</th><th>Tiratore</th><th class="cq">Cat. / Qual.</th><th class="punti">Punti</th>${conSequenza ? '<th class="seqcol">Sequenza</th>' : ''}</tr></thead><tbody>`;
+    let h = `<table><thead><tr><th class="pos">#</th><th class="num">Pett.</th><th>Tiratore</th><th class="cq">Cat. / Qual.</th><th class="punti">Punt.</th>${conSequenza ? '<th class="seqcol">Sequenza</th>' : ''}</tr></thead><tbody>`;
     for (const r of righe) {
       h += `<tr class="${r.aPremio ? 'premio' : ''}">
         <td class="pos">${r.pos}</td>
@@ -251,14 +254,22 @@
       if (!b.righe || b.righe.length === 0) continue;
       const stato = b.inCorso ? '<span class="badge live">in pedana</span>' : (b.completa ? '' : '<span>in attesa</span>');
       h += `<div class="batt"><div class="tit"><h4>Batteria ${b.numero}</h4>${stato}</div>`;
-      for (const r of b.righe) {
+      const perPedana = {};
+      (b.righe || []).forEach(r => perPedana[r.pedana] = r);
+      for (let p = 1; p <= 6; p++) {
+        const r = perPedana[p];
+        if (!r) {
+          h += `<div class="riga vuota"><div class="ped">${p}</div><div class="nome">—</div>` +
+               `<div class="celle">${'<b></b>'.repeat(n)}</div><div class="tot zeri"></div><div class="tot buoni"></div></div>`;
+          continue;
+        }
         const e = r.esiti || '';
         let celle = '';
         for (let i = 0; i < n; i++) celle += `<b class="${e[i] === '1' ? 'b' : e[i] === '0' ? 'z' : ''}">${e[i] === '0' ? '0' : ''}</b>`;
         h += `<div class="riga${r.diTurno ? ' turno' : ''}${r.prova ? ' prova' : ''}">
           <div class="ped">${r.pedana}</div>
           <div class="nome">${esc(r.nominativo)}<small>${r.pettorale ? 'Pett. ' + r.pettorale + ' · ' : ''}${esc(r.catQual || '')}</small></div>
-          <div class="celle" style="grid-template-columns:repeat(${n},1fr)">${celle}</div>
+          <div class="celle">${celle}</div>
           <div class="tot zeri">${r.zeri ?? ''}</div><div class="tot buoni">${r.buoni ?? ''}</div>
         </div>`;
       }
