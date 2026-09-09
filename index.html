@@ -60,9 +60,6 @@
 
   /* ---------- Batterie ---------- */
   .batt { background: var(--navy2); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; }
-  .batt .tit { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
-  .batt .tit h4 { margin: 0; color: var(--gold); font-size: 18px; }
-  .batt .tit span { color: var(--muto); font-size: 13px; }
   .riga { display: grid; grid-template-columns: 34px minmax(140px, 260px) 1fr 44px 44px; gap: 8px; align-items: center; padding: 6px 4px; border-radius: 8px; }
   .riga + .riga { border-top: 1px solid #0f3560; }
   .riga.turno { background: var(--navy3); box-shadow: inset 0 0 0 2px var(--gold); }
@@ -82,6 +79,14 @@
   .riga .tot.zeri { background: rgba(211,47,47,.5); }
   .riga .tot.buoni { background: var(--gold); color: var(--navy); }
   .riga.prova .nome::after { content: " (prova)"; color: var(--muto); font-weight: normal; font-size: 12px; }
+  /* Riga di intestazione della batteria: stessa griglia delle righe tiratore, così numeri e "Zeri"/"Buoni" restano allineati alle colonne sottostanti */
+  .riga.intest { padding: 4px 4px 8px; margin-bottom: 4px; border-bottom: 2px solid var(--gold); }
+  .riga.intest .nome { color: var(--gold); font-size: 18px; overflow: visible; white-space: normal; }
+  .riga.intest .nome span:not(.badge) { color: var(--muto); font-size: 13px; font-weight: normal; margin-left: 8px; }
+  .riga.intest .nome .badge { font-size: 11px; margin-left: 8px; vertical-align: middle; }
+  .riga.intest .celle.num b { background: none; color: var(--muto); font-size: 10px; font-weight: bold; }
+  .riga.intest .celle.num b:nth-child(5n) { color: var(--gold2); }
+  .riga.intest .tot { background: none; color: var(--gold); font-size: 13px; font-weight: bold; padding: 0; }
 
   /* ---------- Archivio ---------- */
   .anno { color: var(--gold); font-size: 20px; margin: 18px 0 8px; }
@@ -107,6 +112,7 @@
     .celle b { border-radius: 3px; font-size: 9px; }
     .celle b:nth-child(5n) { margin-right: 3px; }
     .riga .tot { font-size: 16px; }
+    .riga.intest .tot { font-size: 12px; }
     .lista .info { display: none; }
   }
 </style>
@@ -129,7 +135,7 @@
 
   <main id="app"><div class="vuoto">Caricamento…</div></main>
 
-  <footer>A.S.D. Tiro a Volo Valloni · GestioneGarePiattello <span id="ver">v2</span></footer>
+  <footer>A.S.D. Tiro a Volo Valloni · GestioneGarePiattello <span id="ver">v3</span></footer>
 
 <script>
 (function () {
@@ -247,13 +253,26 @@
     return h;
   }
 
+  function numeriPiattelli(n) {
+    let s = '';
+    for (let i = 1; i <= n; i++) s += `<b>${i}</b>`;
+    return s;
+  }
+
   function htmlBatterie(g) {
     const n = g.numeroPiattelli || 25;
     let h = '';
     for (const b of g.batterie) {
       if (!b.righe || b.righe.length === 0) continue;
       const stato = b.inCorso ? '<span class="badge live">in pedana</span>' : (b.completa ? '' : '<span>in attesa</span>');
-      h += `<div class="batt"><div class="tit"><h4>Batteria ${b.numero}</h4>${stato}</div>`;
+      h += `<div class="batt">
+        <div class="riga intest">
+          <div class="ped"></div>
+          <div class="nome">Batteria ${b.numero} ${stato}</div>
+          <div class="celle num">${numeriPiattelli(n)}</div>
+          <div class="tot zeri">Zeri</div>
+          <div class="tot buoni">Buoni</div>
+        </div>`;
       const perPedana = {};
       (b.righe || []).forEach(r => perPedana[r.pedana] = r);
       for (let p = 1; p <= 6; p++) {
